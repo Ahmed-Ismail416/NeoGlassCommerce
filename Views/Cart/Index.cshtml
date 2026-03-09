@@ -1,0 +1,71 @@
+@model CartVM
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Shopping <span class="gradient-text">Cart</span></h1>
+
+    @if (Model.Items.Any())
+    {
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2 space-y-4">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="glass rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift">
+                        <img src="@item.ImageUrl" alt="@item.ProductName" class="w-20 h-20 object-cover rounded-xl"
+                             onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=No+Image'" />
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800">@item.ProductName</h3>
+                            <p class="text-sm text-gray-500">$@item.UnitPrice.ToString("N2") each</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <form asp-controller="Cart" asp-action="Update" method="post" class="flex items-center">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <div class="glass rounded-xl flex items-center">
+                                    <button type="submit" name="qty" value="@(item.Quantity - 1)" class="px-3 py-2 text-gray-500 hover:text-primary font-bold">−</button>
+                                    <span class="px-3 font-semibold text-gray-800">@item.Quantity</span>
+                                    <button type="submit" name="qty" value="@(item.Quantity + 1)" class="px-3 py-2 text-gray-500 hover:text-primary font-bold">+</button>
+                                </div>
+                            </form>
+                            <span class="font-bold text-gray-800 w-24 text-right">$@item.LineTotal.ToString("N2")</span>
+                            <form asp-controller="Cart" asp-action="Remove" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="p-2 rounded-xl text-danger hover:bg-red-50 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Summary -->
+            <div class="space-y-4">
+                @await Html.PartialAsync("_CartSummary", Model)
+                <a asp-controller="Orders" asp-action="Checkout"
+                   class="block w-full gradient-primary text-white text-center py-3.5 rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all">
+                    Proceed to Checkout
+                </a>
+                <a asp-controller="Catalog" asp-action="Index"
+                   class="block w-full text-center py-3 rounded-xl font-medium text-gray-600 hover:text-primary transition-colors">
+                    ← Continue Shopping
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="glass rounded-2xl p-12 text-center">
+            <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+            </svg>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
+            <p class="text-gray-500 mb-6">Looks like you haven't added anything yet.</p>
+            <a asp-controller="Catalog" asp-action="Index" class="inline-block gradient-primary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-shadow">Start Shopping</a>
+        </div>
+    }
+</div>

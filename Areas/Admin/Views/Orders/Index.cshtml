@@ -1,0 +1,54 @@
+@model List<AdminOrderVM>
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="glass rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-gray-100 bg-white/30">
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Total</th>
+                    <th class="py-4 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                @foreach (var o in Model)
+                {
+                    <tr class="hover:bg-white/50 transition-colors">
+                        <td class="py-4 px-5 font-medium text-gray-800">@o.OrderNumber</td>
+                        <td class="py-4 px-5 text-sm text-gray-600">@o.CustomerName</td>
+                        <td class="py-4 px-5 text-sm text-gray-500">@o.OrderDate.ToString("MMM dd, yyyy")</td>
+                        <td class="py-4 px-5">
+                            @{
+                                var sc = o.Status switch
+                                {
+                                    OrderStatus.Pending => "bg-yellow-100 text-yellow-700",
+                                    OrderStatus.Processing => "bg-blue-100 text-blue-700",
+                                    OrderStatus.Shipped => "bg-purple-100 text-purple-700",
+                                    OrderStatus.Delivered => "bg-green-100 text-green-700",
+                                    OrderStatus.Cancelled => "bg-red-100 text-red-700",
+                                    _ => "bg-gray-100 text-gray-700"
+                                };
+                            }
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full @sc">@o.Status</span>
+                        </td>
+                        <td class="py-4 px-5 font-bold text-right">$@o.TotalAmount.ToString("N2")</td>
+                        <td class="py-4 px-5 text-right">
+                            <a asp-action="Details" asp-route-id="@o.Id" class="text-primary hover:underline font-medium text-sm">Details →</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-12 text-gray-500">No orders yet.</div>
+}

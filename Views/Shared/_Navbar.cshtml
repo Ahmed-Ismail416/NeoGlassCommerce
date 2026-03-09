@@ -1,0 +1,105 @@
+@inject NeoGlassCommerce.Services.CartService CartService
+
+<nav class="glass sticky top-0 z-50 shadow-lg" x-data="{ mobileOpen: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a asp-controller="Catalog" asp-action="Index" class="flex items-center gap-2">
+                <div class="w-9 h-9 gradient-primary rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <span class="text-xl font-bold gradient-text">NeoGlass</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-6">
+                <a asp-controller="Catalog" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">Products</a>
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Orders" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">My Orders</a>
+                }
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">Admin</a>
+                }
+            </div>
+
+            <!-- Right -->
+            <div class="flex items-center gap-4">
+                <!-- Search -->
+                <form asp-controller="Catalog" asp-action="Index" method="get" class="hidden md:flex items-center">
+                    <div class="relative">
+                        <input type="text" name="q" placeholder="Search products..." class="pl-9 pr-4 py-2 rounded-xl bg-white/50 border border-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-48" />
+                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </form>
+
+                <!-- Cart -->
+                <a asp-controller="Cart" asp-action="Index" class="relative p-2 rounded-xl hover:bg-white/50 transition-colors">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>
+                    @{
+                        var cartCount = CartService.GetCartItemCount();
+                    }
+                    @if (cartCount > 0)
+                    {
+                        <span class="absolute -top-1 -right-1 bg-danger text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">@cartCount</span>
+                    }
+                </a>
+
+                <!-- User -->
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="relative" x-data="{ open: false }">
+                        <button @@click="open = !open" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white/50 transition-colors">
+                            <div class="w-8 h-8 gradient-primary rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-semibold">@User.Identity.Name?.Substring(0, 1).ToUpper()</span>
+                            </div>
+                        </button>
+                        <div x-show="open" @@click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 glass rounded-xl shadow-xl py-2 z-50">
+                            <span class="block px-4 py-2 text-sm text-gray-500 border-b border-gray-100">@User.Identity.Name</span>
+                            <a asp-controller="Orders" asp-action="Index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary">My Orders</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-danger hover:bg-red-50">Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="gradient-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:shadow-lg transition-shadow">Sign In</a>
+                }
+
+                <!-- Mobile Toggle -->
+                <button @@click="mobileOpen = !mobileOpen" class="md:hidden p-2 rounded-xl hover:bg-white/50">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileOpen" x-transition class="md:hidden pb-4 border-t border-gray-100 mt-2 pt-4 space-y-2">
+            <a asp-controller="Catalog" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">Products</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Orders" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">My Orders</a>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">Admin Panel</a>
+            }
+            <form asp-controller="Catalog" asp-action="Index" method="get" class="px-4 pt-2">
+                <input type="text" name="q" placeholder="Search..." class="w-full pl-4 pr-4 py-2 rounded-xl bg-white/50 border border-white/30 text-sm" />
+            </form>
+        </div>
+    </div>
+</nav>
