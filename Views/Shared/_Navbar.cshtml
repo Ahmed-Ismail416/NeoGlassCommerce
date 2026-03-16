@@ -1,5 +1,10 @@
 @inject NeoGlassCommerce.Services.CartService CartService
 
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+}
+
 <nav class="glass sticky top-0 z-50 shadow-lg" x-data="{ mobileOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -14,17 +19,26 @@
             </a>
 
             <!-- Desktop Nav -->
-            <div class="hidden md:flex items-center gap-6">
-                <a asp-controller="Catalog" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">Products</a>
+            <div class="hidden md:flex items-center gap-1">
+                <a asp-controller="Catalog" asp-action="Index"
+                   class="@(currentController == "Catalog" ? "bg-primary/10 text-primary font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-primary") px-4 py-2 rounded-xl font-medium transition-all text-sm">
+                    Products
+                </a>
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a asp-controller="Orders" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">My Orders</a>
+                    <a asp-controller="Orders" asp-action="Index"
+                       class="@(currentController == "Orders" ? "bg-primary/10 text-primary font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-primary") px-4 py-2 rounded-xl font-medium transition-all text-sm">
+                        My Orders
+                    </a>
                 }
 
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-gray-700 hover:text-primary font-medium transition-colors">Admin</a>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                       class="@(currentArea == "Admin" ? "bg-primary/10 text-primary font-semibold" : "text-gray-600 hover:bg-gray-100 hover:text-primary") px-4 py-2 rounded-xl font-medium transition-all text-sm">
+                        Admin
+                    </a>
                 }
             </div>
 
@@ -41,8 +55,9 @@
                 </form>
 
                 <!-- Cart -->
-                <a asp-controller="Cart" asp-action="Index" class="relative p-2 rounded-xl hover:bg-white/50 transition-colors">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a asp-controller="Cart" asp-action="Index"
+                   class="relative p-2 rounded-xl @(currentController == "Cart" ? "bg-primary/10" : "hover:bg-white/50") transition-colors">
+                    <svg class="w-6 h-6 @(currentController == "Cart" ? "text-primary" : "text-gray-700")" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                     </svg>
                     @{
@@ -87,15 +102,24 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileOpen" x-transition class="md:hidden pb-4 border-t border-gray-100 mt-2 pt-4 space-y-2">
-            <a asp-controller="Catalog" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">Products</a>
+        <div x-show="mobileOpen" x-transition class="md:hidden pb-4 border-t border-gray-100 mt-2 pt-4 space-y-1">
+            <a asp-controller="Catalog" asp-action="Index"
+               class="@(currentController == "Catalog" ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-primary/10 hover:text-primary") block px-4 py-2.5 rounded-xl transition-all">
+                Products
+            </a>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <a asp-controller="Orders" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">My Orders</a>
+                <a asp-controller="Orders" asp-action="Index"
+                   class="@(currentController == "Orders" ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-primary/10 hover:text-primary") block px-4 py-2.5 rounded-xl transition-all">
+                    My Orders
+                </a>
             }
             @if (User.IsInRole("Admin"))
             {
-                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="block px-4 py-2 rounded-lg text-gray-700 hover:bg-primary/10">Admin Panel</a>
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                   class="@(currentArea == "Admin" ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-primary/10 hover:text-primary") block px-4 py-2.5 rounded-xl transition-all">
+                    Admin Panel
+                </a>
             }
             <form asp-controller="Catalog" asp-action="Index" method="get" class="px-4 pt-2">
                 <input type="text" name="q" placeholder="Search..." class="w-full pl-4 pr-4 py-2 rounded-xl bg-white/50 border border-white/30 text-sm" />

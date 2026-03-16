@@ -36,6 +36,12 @@ namespace NeoGlassCommerce.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ExistsWithNameAsync(string name, int? excludeId = null)
+        {
+            return await _context.Categories.AnyAsync(c =>
+                c.Name == name && (excludeId == null || c.Id != excludeId));
+        }
+
         public async Task UpdateAsync(Category category)
         {
             _context.Categories.Update(category);

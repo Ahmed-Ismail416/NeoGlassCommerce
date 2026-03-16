@@ -12,6 +12,8 @@ namespace NeoGlassCommerce.Repositories
         Task AddAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(int id);
+        Task<bool> HasOrdersAsync(int id);
+        Task<bool> ExistsWithSKUAsync(string sku, int? excludeId = null);
         Task<int> GetCountAsync();
     }
 }

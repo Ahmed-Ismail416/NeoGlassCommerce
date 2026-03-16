@@ -13,11 +13,13 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
     {
         private readonly IProductRepository _productRepo;
         private readonly ICategoryRepository _categoryRepo;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductsController(IProductRepository productRepo, ICategoryRepository categoryRepo)
+        public ProductsController(IProductRepository productRepo, ICategoryRepository categoryRepo, IWebHostEnvironment env)
         {
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
+            _env = env;
         }
 
         public async Task<IActionResult> Index()
@@ -54,6 +56,26 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
                 return View(vm);
             }
 
+            var imageUrl = vm.ImageUrl;
+            if (vm.ImageFile != null && vm.ImageFile.Length > 0)
+            {
+                var saved = await SaveImageAsync(vm.ImageFile);
+                if (saved == null)
+                {
+                    ModelState.AddModelError("ImageFile", "Only jpg, jpeg, png, webp, gif are allowed.");
+                    await PopulateCategoriesAsync();
+                    return View(vm);
+                }
+                imageUrl = saved;
+            }
+
+            if (await _productRepo.ExistsWithSKUAsync(vm.SKU))
+            {
+                ModelState.AddModelError("SKU", "A product with this SKU already exists.");
+                await PopulateCategoriesAsync();
+                return View(vm);
+            }
+
             var product = new Product
             {
                 Name = vm.Name,
@@ -62,7 +84,7 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
                 Price = vm.Price,
                 StockQuantity = vm.StockQuantity,
                 CategoryId = vm.CategoryId,
-                ImageUrl = vm.ImageUrl,
+                ImageUrl = imageUrl,
                 IsActive = vm.IsActive,
                 CreatedAt = DateTime.UtcNow
             };
@@ -108,13 +130,33 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
             var product = await _productRepo.GetByIdAsync(vm.Id);
             if (product == null) return NotFound();
 
+            var imageUrl = vm.ImageUrl;
+            if (vm.ImageFile != null && vm.ImageFile.Length > 0)
+            {
+                var saved = await SaveImageAsync(vm.ImageFile);
+                if (saved == null)
+                {
+                    ModelState.AddModelError("ImageFile", "Only jpg, jpeg, png, webp, gif are allowed.");
+                    await PopulateCategoriesAsync();
+                    return View(vm);
+                }
+                imageUrl = saved;
+            }
+
+            if (await _productRepo.ExistsWithSKUAsync(vm.SKU, excludeId: vm.Id))
+            {
+                ModelState.AddModelError("SKU", "A product with this SKU already exists.");
+                await PopulateCategoriesAsync();
+                return View(vm);
+            }
+
             product.Name = vm.Name;
             product.SKU = vm.SKU;
             product.Description = vm.Description;
             product.Price = vm.Price;
             product.StockQuantity = vm.StockQuantity;
             product.CategoryId = vm.CategoryId;
-            product.ImageUrl = vm.ImageUrl;
+            product.ImageUrl = imageUrl;
             product.IsActive = vm.IsActive;
 
             await _productRepo.UpdateAsync(product);
@@ -126,6 +168,11 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            if (await _productRepo.HasOrdersAsync(id))
+            {
+                TempData["Error"] = "Cannot delete product because it has existing orders.";
+                return RedirectToAction(nameof(Index));
+            }
             await _productRepo.DeleteAsync(id);
             TempData["Success"] = "Product deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -135,6 +182,22 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
         {
             var categories = await _categoryRepo.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
+        }
+
+        private async Task<string?> SaveImageAsync(IFormFile file)
+        {
+            var allowed = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!allowed.Contains(ext)) return null;
+
+            var folder = Path.Combine(_env.WebRootPath, "images", "products");
+            Directory.CreateDirectory(folder);
+
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var path = Path.Combine(folder, fileName);
+            using var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
+            return $"/images/products/{fileName}";
         }
     }
 }

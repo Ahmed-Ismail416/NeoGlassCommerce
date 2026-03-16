@@ -92,6 +92,17 @@ namespace NeoGlassCommerce.Repositories
             }
         }
 
+        public async Task<bool> HasOrdersAsync(int id)
+        {
+            return await _context.OrderItems.AnyAsync(oi => oi.ProductId == id);
+        }
+
+        public async Task<bool> ExistsWithSKUAsync(string sku, int? excludeId = null)
+        {
+            return await _context.Products.AnyAsync(p =>
+                p.SKU == sku && (excludeId == null || p.Id != excludeId));
+        }
+
         public async Task<int> GetCountAsync()
         {
             return await _context.Products.CountAsync(p => p.IsActive);
