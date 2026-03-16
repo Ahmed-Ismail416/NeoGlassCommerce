@@ -3,44 +3,38 @@
     ViewData["Title"] = "Orders";
 }
 
-<div class="bg-white border border-gray-200 rounded overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-            <thead>
-                <tr class="border-b border-gray-200 bg-gray-50">
-                    <th class="py-3 px-4 font-medium text-gray-500">Order</th>
-                    <th class="py-3 px-4 font-medium text-gray-500">Customer</th>
-                    <th class="py-3 px-4 font-medium text-gray-500">Date</th>
-                    <th class="py-3 px-4 font-medium text-gray-500">Status</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-right">Total</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-right">Actions</th>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Total</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var o in Model)
                 {
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
-                        <td class="py-3 px-4 font-medium text-gray-800">@o.OrderNumber</td>
-                        <td class="py-3 px-4 text-gray-600">@o.CustomerName</td>
-                        <td class="py-3 px-4 text-gray-500">@o.OrderDate.ToString("MMM dd, yyyy")</td>
-                        <td class="py-3 px-4">
-                            @{
-                                var sc = o.Status switch
-                                {
-                                    OrderStatus.Pending => "bg-yellow-100 text-yellow-800",
-                                    OrderStatus.Processing => "bg-blue-100 text-blue-800",
-                                    OrderStatus.Shipped => "bg-purple-100 text-purple-800",
-                                    OrderStatus.Delivered => "bg-green-100 text-green-800",
-                                    OrderStatus.Cancelled => "bg-red-100 text-red-800",
-                                    _ => "bg-gray-100 text-gray-700"
-                                };
-                            }
-                            <span class="text-xs px-2 py-0.5 rounded @sc">@o.Status</span>
-                        </td>
-                        <td class="py-3 px-4 font-medium text-right">$@o.TotalAmount.ToString("N2")</td>
-                        <td class="py-3 px-4 text-right">
-                            <a asp-action="Details" asp-route-id="@o.Id" class="text-blue-600 hover:underline">Details</a>
-                        </td>
+                    var bc = o.Status switch
+                    {
+                        OrderStatus.Pending => "bg-warning text-dark",
+                        OrderStatus.Processing => "bg-info text-dark",
+                        OrderStatus.Shipped => "bg-primary",
+                        OrderStatus.Delivered => "bg-success",
+                        OrderStatus.Cancelled => "bg-danger",
+                        _ => "bg-secondary"
+                    };
+                    <tr>
+                        <td>@o.OrderNumber</td>
+                        <td>@o.CustomerName</td>
+                        <td>@o.OrderDate.ToString("MMM dd, yyyy")</td>
+                        <td><span class="badge @bc">@o.Status</span></td>
+                        <td class="text-end">$@o.TotalAmount.ToString("N2")</td>
+                        <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-outline-primary btn-sm">Details</a></td>
                     </tr>
                 }
             </tbody>
@@ -50,5 +44,5 @@
 
 @if (!Model.Any())
 {
-    <div class="text-center py-8 text-gray-500 text-sm">No orders yet.</div>
+    <p class="text-muted text-center py-4">No orders yet.</p>
 }

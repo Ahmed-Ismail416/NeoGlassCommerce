@@ -3,58 +3,39 @@
     ViewData["Title"] = Model.Name;
 }
 
-<div class="max-w-4xl mx-auto">
-    <!-- Breadcrumb -->
-    <nav class="text-sm text-gray-500 mb-5">
-        <a asp-controller="Catalog" asp-action="Index" class="hover:underline text-blue-600">Products</a>
-        <span class="mx-1">/</span>
-        <span class="text-gray-800">@Model.Name</span>
-    </nav>
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Catalog" asp-action="Index">Products</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
 
-    <div class="bg-white border border-gray-200 rounded overflow-hidden">
-        <div class="grid md:grid-cols-2 gap-0">
-            <!-- Image -->
-            <div class="bg-gray-50 p-6 flex items-center justify-center border-r border-gray-200">
-                <img src="@Model.ImageUrl" alt="@Model.Name"
-                     class="max-h-80 object-contain"
-                     onerror="this.src='https://placehold.co/600x400/e2e8f0/64748b?text=No+Image'" />
-            </div>
+<div class="card">
+    <div class="row g-0">
+        <div class="col-md-5 text-center p-3 bg-light">
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" style="max-height:320px;object-fit:contain;"
+                 onerror="this.src='https://placehold.co/600x400/e2e8f0/64748b?text=No+Image'" />
+        </div>
+        <div class="col-md-7">
+            <div class="card-body">
+                <small class="text-muted">SKU: @Model.SKU &middot; @Model.CategoryName</small>
+                <h4 class="card-title mt-1">@Model.Name</h4>
+                <h5 class="mb-3">$@Model.Price.ToString("N2")</h5>
+                <p class="card-text text-muted">@Model.Description</p>
 
-            <!-- Info -->
-            <div class="p-6 flex flex-col justify-center">
-                <p class="text-xs text-gray-400 mb-1">SKU: @Model.SKU &nbsp;|&nbsp; @Model.CategoryName</p>
-                <h1 class="text-2xl font-bold text-gray-900 mb-3">@Model.Name</h1>
-
-                <p class="text-3xl font-bold text-gray-900 mb-3">$@Model.Price.ToString("N2")</p>
-
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">@Model.Description</p>
-
-                <!-- Stock -->
-                <div class="mb-4">
-                    @if (Model.StockQuantity > 0)
-                    {
-                        <span class="text-green-700 text-sm font-medium">In Stock (@Model.StockQuantity available)</span>
-                    }
-                    else
-                    {
-                        <span class="text-red-600 text-sm font-medium">Out of Stock</span>
-                    }
-                </div>
-
-                <!-- Add to cart -->
                 @if (Model.StockQuantity > 0)
                 {
-                    <form asp-controller="Cart" asp-action="Add" method="post" class="flex items-center gap-3" x-data="{ qty: 1 }">
+                    <p class="text-success small">In Stock (@Model.StockQuantity available)</p>
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex align-items-center gap-2 mt-3">
                         <input type="hidden" name="productId" value="@Model.Id" />
-                        <div class="border border-gray-300 rounded flex items-center">
-                            <button type="button" @@click="qty = Math.max(1, qty - 1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100">−</button>
-                            <input type="number" name="quantity" x-model="qty" min="1" max="@Model.StockQuantity" class="w-12 text-center border-0 text-sm focus:outline-none" />
-                            <button type="button" @@click="qty = Math.min(@Model.StockQuantity, qty + 1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100">+</button>
-                        </div>
-                        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded font-medium hover:bg-blue-700 text-sm">
-                            Add to Cart
-                        </button>
+                        <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity"
+                               class="form-control form-control-sm" style="width:70px;" />
+                        <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
                     </form>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Out of Stock</span>
                 }
             </div>
         </div>

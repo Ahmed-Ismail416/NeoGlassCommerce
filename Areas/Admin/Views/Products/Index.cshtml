@@ -3,55 +3,49 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="flex items-center justify-between mb-4">
-    <p class="text-sm text-gray-500">@Model.Count products total</p>
-    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-        + Add Product
-    </a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <small class="text-muted">@Model.Count products</small>
+    <a asp-action="Create" class="btn btn-primary btn-sm">+ Add Product</a>
 </div>
 
-<div class="bg-white border border-gray-200 rounded overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-            <thead>
-                <tr class="border-b border-gray-200 bg-gray-50">
-                    <th class="py-3 px-4 font-medium text-gray-500">Product</th>
-                    <th class="py-3 px-4 font-medium text-gray-500">SKU</th>
-                    <th class="py-3 px-4 font-medium text-gray-500">Category</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-right">Price</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-center">Stock</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-center">Status</th>
-                    <th class="py-3 px-4 font-medium text-gray-500 text-right">Actions</th>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Category</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-center">Stock</th>
+                    <th class="text-center">Status</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var p in Model)
                 {
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
-                        <td class="py-3 px-4">
-                            <div class="flex items-center gap-2">
-                                <img src="@p.ImageUrl" class="w-9 h-9 rounded object-cover" onerror="this.src='https://placehold.co/40/e2e8f0/64748b?text=N'" />
-                                <span class="font-medium text-gray-800">@p.Name</span>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="@p.ImageUrl" style="width:36px;height:36px;object-fit:cover;"
+                                     onerror="this.src='https://placehold.co/36/e2e8f0/64748b?text=N'" />
+                                @p.Name
                             </div>
                         </td>
-                        <td class="py-3 px-4 text-gray-500">@p.SKU</td>
-                        <td class="py-3 px-4 text-gray-500">@p.CategoryName</td>
-                        <td class="py-3 px-4 font-medium text-right">$@p.Price.ToString("N2")</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="@(p.StockQuantity > 0 ? "text-green-700" : "text-red-600") font-medium">@p.StockQuantity</span>
+                        <td class="text-muted small">@p.SKU</td>
+                        <td class="text-muted small">@p.CategoryName</td>
+                        <td class="text-end">$@p.Price.ToString("N2")</td>
+                        <td class="text-center @(p.StockQuantity > 0 ? "text-success" : "text-danger")">@p.StockQuantity</td>
+                        <td class="text-center">
+                            <span class="badge @(p.IsActive ? "bg-success" : "bg-danger")">@(p.IsActive ? "Active" : "Inactive")</span>
                         </td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="@(p.IsActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800") text-xs px-2 py-0.5 rounded">
-                                @(p.IsActive ? "Active" : "Inactive")
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <a asp-action="Edit" asp-route-id="@p.Id" class="text-blue-600 hover:underline">Edit</a>
-                                <form asp-action="Delete" asp-route-id="@p.Id" method="post" onsubmit="return confirm('Delete this product?')">
-                                    <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                                </form>
-                            </div>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-secondary btn-sm me-1">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Delete this product?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 }

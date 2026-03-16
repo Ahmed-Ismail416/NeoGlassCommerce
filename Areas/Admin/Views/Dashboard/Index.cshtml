@@ -3,70 +3,75 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<!-- Stats Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white border border-gray-200 rounded p-4">
-        <p class="text-sm text-gray-500">Total Products</p>
-        <p class="text-2xl font-bold text-gray-800 mt-1">@Model.TotalProducts</p>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-1">Total Products</h6>
+                <h3>@Model.TotalProducts</h3>
+            </div>
+        </div>
     </div>
-    <div class="bg-white border border-gray-200 rounded p-4">
-        <p class="text-sm text-gray-500">Total Orders</p>
-        <p class="text-2xl font-bold text-gray-800 mt-1">@Model.TotalOrders</p>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-1">Total Orders</h6>
+                <h3>@Model.TotalOrders</h3>
+            </div>
+        </div>
     </div>
-    <div class="bg-white border border-gray-200 rounded p-4">
-        <p class="text-sm text-gray-500">Revenue</p>
-        <p class="text-2xl font-bold text-gray-800 mt-1">$@Model.TotalRevenue.ToString("N2")</p>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-1">Revenue</h6>
+                <h3>$@Model.TotalRevenue.ToString("N2")</h3>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Recent Orders -->
-<div class="bg-white border border-gray-200 rounded p-4">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="font-semibold text-gray-800">Recent Orders</h2>
-        <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="text-sm text-blue-600 hover:underline">View All</a>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Orders</span>
+        <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-outline-primary btn-sm">View All</a>
     </div>
-
-    @if (Model.RecentOrders.Any())
-    {
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead>
-                    <tr class="border-b border-gray-200">
-                        <th class="py-2 px-3 font-medium text-gray-500">Order</th>
-                        <th class="py-2 px-3 font-medium text-gray-500">Date</th>
-                        <th class="py-2 px-3 font-medium text-gray-500">Status</th>
-                        <th class="py-2 px-3 font-medium text-gray-500 text-right">Total</th>
+    <div class="card-body p-0">
+        @if (Model.RecentOrders.Any())
+        {
+            <table class="table mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var order in Model.RecentOrders)
                     {
-                        <tr class="border-b border-gray-100 hover:bg-gray-50">
-                            <td class="py-2 px-3 text-gray-800">@order.OrderNumber</td>
-                            <td class="py-2 px-3 text-gray-500">@order.OrderDate.ToString("MMM dd, yyyy")</td>
-                            <td class="py-2 px-3">
-                                @{
-                                    var sc = order.Status switch
-                                    {
-                                        OrderStatus.Pending => "bg-yellow-100 text-yellow-800",
-                                        OrderStatus.Processing => "bg-blue-100 text-blue-800",
-                                        OrderStatus.Shipped => "bg-purple-100 text-purple-800",
-                                        OrderStatus.Delivered => "bg-green-100 text-green-800",
-                                        OrderStatus.Cancelled => "bg-red-100 text-red-800",
-                                        _ => "bg-gray-100 text-gray-700"
-                                    };
-                                }
-                                <span class="text-xs px-2 py-0.5 rounded @sc">@order.Status</span>
-                            </td>
-                            <td class="py-2 px-3 font-medium text-right">$@order.TotalAmount.ToString("N2")</td>
+                        var bc = order.Status switch
+                        {
+                            OrderStatus.Pending => "bg-warning text-dark",
+                            OrderStatus.Processing => "bg-info text-dark",
+                            OrderStatus.Shipped => "bg-primary",
+                            OrderStatus.Delivered => "bg-success",
+                            OrderStatus.Cancelled => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                        <tr>
+                            <td>@order.OrderNumber</td>
+                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                            <td><span class="badge @bc">@order.Status</span></td>
+                            <td class="text-end">$@order.TotalAmount.ToString("N2")</td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
-    }
-    else
-    {
-        <p class="text-gray-500 text-sm py-4">No orders yet.</p>
-    }
+        }
+        else
+        {
+            <p class="text-muted text-center py-4">No orders yet.</p>
+        }
+    </div>
 </div>

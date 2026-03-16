@@ -3,62 +3,64 @@
     ViewData["Title"] = "Shopping Cart";
 }
 
-<div class="max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Shopping Cart</h1>
+<h4 class="mb-4">Shopping Cart</h4>
 
-    @if (Model.Items.Any())
-    {
-        <div class="grid lg:grid-cols-3 gap-6">
-            <!-- Cart Items -->
-            <div class="lg:col-span-2 space-y-3">
-                @foreach (var item in Model.Items)
-                {
-                    <div class="bg-white border border-gray-200 rounded p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <img src="@item.ImageUrl" alt="@item.ProductName" class="w-16 h-16 object-cover rounded"
-                             onerror="this.src='https://placehold.co/80x80/e2e8f0/64748b?text=N'" />
-                        <div class="flex-1">
-                            <h3 class="font-medium text-gray-800">@item.ProductName</h3>
-                            <p class="text-sm text-gray-500">$@item.UnitPrice.ToString("N2") each</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <form asp-controller="Cart" asp-action="Update" method="post" class="flex items-center">
-                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                <div class="border border-gray-300 rounded flex items-center">
-                                    <button type="submit" name="qty" value="@(item.Quantity - 1)" class="px-2 py-1 text-gray-600 hover:bg-gray-100 text-sm">−</button>
-                                    <span class="px-3 text-sm font-medium">@item.Quantity</span>
-                                    <button type="submit" name="qty" value="@(item.Quantity + 1)" class="px-2 py-1 text-gray-600 hover:bg-gray-100 text-sm">+</button>
-                                </div>
-                            </form>
-                            <span class="font-semibold text-gray-800 w-20 text-right text-sm">$@item.LineTotal.ToString("N2")</span>
-                            <form asp-controller="Cart" asp-action="Remove" method="post">
-                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                <button type="submit" class="text-red-600 hover:underline text-sm">Remove</button>
-                            </form>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <!-- Summary -->
-            <div class="space-y-3">
-                @await Html.PartialAsync("_CartSummary", Model)
-                <a asp-controller="Orders" asp-action="Checkout"
-                   class="block w-full bg-blue-600 text-white text-center py-3 rounded font-medium hover:bg-blue-700">
-                    Proceed to Checkout
-                </a>
-                <a asp-controller="Catalog" asp-action="Index"
-                   class="block w-full text-center py-2 text-sm text-gray-600 hover:underline">
-                    &larr; Continue Shopping
-                </a>
-            </div>
+@if (Model.Items.Any())
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th colspan="2">Product</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-end">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td style="width:64px;">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" style="width:48px;height:48px;object-fit:cover;"
+                                     onerror="this.src='https://placehold.co/48/e2e8f0/64748b?text=N'" />
+                            </td>
+                            <td>
+                                <div>@item.ProductName</div>
+                                <small class="text-muted">$@item.UnitPrice.ToString("N2") each</small>
+                            </td>
+                            <td class="text-center">
+                                <form asp-controller="Cart" asp-action="Update" method="post" class="d-inline-flex align-items-center">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" name="qty" value="@(item.Quantity - 1)" class="btn btn-outline-secondary btn-sm px-2 py-0">−</button>
+                                    <span class="mx-2">@item.Quantity</span>
+                                    <button type="submit" name="qty" value="@(item.Quantity + 1)" class="btn btn-outline-secondary btn-sm px-2 py-0">+</button>
+                                </form>
+                            </td>
+                            <td class="text-end">$@item.LineTotal.ToString("N2")</td>
+                            <td>
+                                <form asp-controller="Cart" asp-action="Remove" method="post">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" class="btn btn-link btn-sm text-danger p-0">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-    else
-    {
-        <div class="bg-white border border-gray-200 rounded p-10 text-center">
-            <h2 class="text-lg font-semibold text-gray-800 mb-2">Your cart is empty</h2>
-            <p class="text-gray-500 text-sm mb-4">You haven't added anything yet.</p>
-            <a asp-controller="Catalog" asp-action="Index" class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 text-sm">Start Shopping</a>
+        <div class="col-lg-4">
+            @await Html.PartialAsync("_CartSummary", Model)
+            <a asp-controller="Orders" asp-action="Checkout" class="btn btn-primary w-100 mt-2">Proceed to Checkout</a>
+            <a asp-controller="Catalog" asp-action="Index" class="btn btn-link w-100 mt-1">Continue Shopping</a>
         </div>
-    }
-</div>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <p class="text-muted mb-3">Your cart is empty.</p>
+        <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary">Start Shopping</a>
+    </div>
+}
