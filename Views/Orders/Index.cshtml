@@ -3,39 +3,38 @@
     ViewData["Title"] = "My Orders";
 }
 
-<div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">My <span class="gradient-text">Orders</span></h1>
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">My Orders</h1>
 
     @if (Model.Any())
     {
-        <div class="space-y-4">
+        <div class="space-y-3">
             @foreach (var order in Model)
             {
-                <div class="glass rounded-2xl p-6 hover-lift">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <h3 class="font-bold text-gray-800 text-lg">@order.OrderNumber</h3>
-                            <p class="text-sm text-gray-500">Placed on @order.OrderDate.ToString("MMM dd, yyyy 'at' hh:mm tt")</p>
-                            <p class="text-sm text-gray-500">@order.ItemCount item(s)</p>
+                <div class="bg-white border border-gray-200 rounded p-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
+                            <h3 class="font-semibold text-gray-800">@order.OrderNumber</h3>
+                            <p class="text-sm text-gray-500">@order.OrderDate.ToString("MMM dd, yyyy") &bull; @order.ItemCount item(s)</p>
                         </div>
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-3">
                             <div class="text-right">
-                                <p class="text-2xl font-bold gradient-text">$@order.TotalAmount.ToString("N2")</p>
+                                <p class="font-bold text-gray-900">$@order.TotalAmount.ToString("N2")</p>
                                 @{
                                     var statusColor = order.Status switch
                                     {
-                                        OrderStatus.Pending => "bg-yellow-100 text-yellow-700",
-                                        OrderStatus.Processing => "bg-blue-100 text-blue-700",
-                                        OrderStatus.Shipped => "bg-purple-100 text-purple-700",
-                                        OrderStatus.Delivered => "bg-green-100 text-green-700",
-                                        OrderStatus.Cancelled => "bg-red-100 text-red-700",
+                                        OrderStatus.Pending => "bg-yellow-100 text-yellow-800",
+                                        OrderStatus.Processing => "bg-blue-100 text-blue-800",
+                                        OrderStatus.Shipped => "bg-purple-100 text-purple-800",
+                                        OrderStatus.Delivered => "bg-green-100 text-green-800",
+                                        OrderStatus.Cancelled => "bg-red-100 text-red-800",
                                         _ => "bg-gray-100 text-gray-700"
                                     };
                                 }
-                                <span class="inline-block mt-1 text-xs font-semibold px-3 py-1 rounded-full @statusColor">@order.Status</span>
+                                <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded @statusColor">@order.Status</span>
                             </div>
                             <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"
-                               class="gradient-primary text-white px-5 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-primary/25 transition-all">
+                               class="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700">
                                 View
                             </a>
                         </div>
@@ -46,13 +45,10 @@
     }
     else
     {
-        <div class="glass rounded-2xl p-12 text-center">
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">No orders yet</h2>
-            <p class="text-gray-500 mb-6">Start shopping to see your orders here.</p>
-            <a asp-controller="Catalog" asp-action="Index" class="inline-block gradient-primary text-white px-8 py-3 rounded-xl font-semibold">Browse Products</a>
+        <div class="bg-white border border-gray-200 rounded p-10 text-center">
+            <h2 class="text-lg font-semibold text-gray-800 mb-2">No orders yet</h2>
+            <p class="text-gray-500 text-sm mb-4">Start shopping to see your orders here.</p>
+            <a asp-controller="Catalog" asp-action="Index" class="inline-block bg-blue-600 text-white px-5 py-2 rounded text-sm hover:bg-blue-700">Browse Products</a>
         </div>
     }
 </div>

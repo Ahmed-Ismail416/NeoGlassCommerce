@@ -3,90 +3,82 @@
     ViewData["Title"] = "Checkout";
 }
 
-<div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">
-        <span class="gradient-text">Checkout</span>
-    </h1>
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Checkout</h1>
 
     <form asp-controller="Orders" asp-action="Checkout" method="post">
-        <div class="grid lg:grid-cols-5 gap-8">
+        <div class="grid lg:grid-cols-5 gap-6">
             <!-- Shipping Form -->
             <div class="lg:col-span-3">
-                <div class="glass rounded-2xl p-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Shipping Address
-                    </h2>
+                <div class="bg-white border border-gray-200 rounded p-6">
+                    <h2 class="font-semibold text-gray-800 mb-4">Shipping Address</h2>
 
-                    <div asp-validation-summary="All" class="text-danger text-sm mb-4"></div>
+                    <div asp-validation-summary="All" class="text-red-600 text-sm mb-3"></div>
 
-                    <div class="space-y-5">
+                    <div class="space-y-4">
                         <div>
-                            <label asp-for="Country" class="block text-sm font-medium text-gray-700 mb-1.5"></label>
-                            <input asp-for="Country" class="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="United States" />
-                            <span asp-validation-for="Country" class="text-danger text-xs"></span>
+                            <label asp-for="Country" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                            <input asp-for="Country" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-400" placeholder="United States" />
+                            <span asp-validation-for="Country" class="text-red-600 text-xs"></span>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label asp-for="City" class="block text-sm font-medium text-gray-700 mb-1.5"></label>
-                                <input asp-for="City" class="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="New York" />
-                                <span asp-validation-for="City" class="text-danger text-xs"></span>
+                                <label asp-for="City" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                                <input asp-for="City" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-400" placeholder="New York" />
+                                <span asp-validation-for="City" class="text-red-600 text-xs"></span>
                             </div>
                             <div>
-                                <label asp-for="Zip" class="block text-sm font-medium text-gray-700 mb-1.5"></label>
-                                <input asp-for="Zip" class="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="10001" />
-                                <span asp-validation-for="Zip" class="text-danger text-xs"></span>
+                                <label asp-for="Zip" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                                <input asp-for="Zip" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-400" placeholder="10001" />
+                                <span asp-validation-for="Zip" class="text-red-600 text-xs"></span>
                             </div>
                         </div>
                         <div>
-                            <label asp-for="Street" class="block text-sm font-medium text-gray-700 mb-1.5"></label>
-                            <input asp-for="Street" class="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="123 Main Street, Apt 4B" />
-                            <span asp-validation-for="Street" class="text-danger text-xs"></span>
+                            <label asp-for="Street" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                            <input asp-for="Street" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-400" placeholder="123 Main Street" />
+                            <span asp-validation-for="Street" class="text-red-600 text-xs"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Order Summary -->
-            <div class="lg:col-span-2 space-y-4">
-                <div class="glass rounded-2xl p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Order Summary</h3>
-                    <div class="space-y-3 max-h-64 overflow-y-auto">
+            <div class="lg:col-span-2 space-y-3">
+                <div class="bg-white border border-gray-200 rounded p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">Order Summary</h3>
+                    <div class="space-y-2 max-h-56 overflow-y-auto">
                         @foreach (var item in Model.Cart.Items)
                         {
-                            <div class="flex items-center gap-3 text-sm">
-                                <img src="@item.ImageUrl" class="w-12 h-12 object-cover rounded-lg" onerror="this.src='https://placehold.co/48/e2e8f0/64748b?text=N'" />
+                            <div class="flex items-center gap-2 text-sm">
+                                <img src="@item.ImageUrl" class="w-10 h-10 object-cover rounded" onerror="this.src='https://placehold.co/40/e2e8f0/64748b?text=N'" />
                                 <div class="flex-1">
-                                    <p class="font-medium text-gray-800 line-clamp-1">@item.ProductName</p>
-                                    <p class="text-gray-500">x@item.Quantity</p>
+                                    <p class="font-medium text-gray-800 truncate">@item.ProductName</p>
+                                    <p class="text-gray-500 text-xs">x@item.Quantity</p>
                                 </div>
-                                <span class="font-semibold">$@item.LineTotal.ToString("N2")</span>
+                                <span class="text-sm font-medium">$@item.LineTotal.ToString("N2")</span>
                             </div>
                         }
                     </div>
-                    <hr class="my-4 border-gray-200" />
+                    <hr class="my-3 border-gray-200" />
                     <div class="flex justify-between text-gray-600 text-sm">
                         <span>Subtotal</span>
                         <span>$@Model.Cart.Total.ToString("N2")</span>
                     </div>
-                    <div class="flex justify-between text-gray-600 text-sm mt-2">
+                    <div class="flex justify-between text-gray-600 text-sm mt-1">
                         <span>Shipping</span>
-                        <span class="text-accent font-medium">Free</span>
+                        <span class="text-green-700">Free</span>
                     </div>
-                    <hr class="my-4 border-gray-200" />
-                    <div class="flex justify-between text-lg font-bold">
+                    <hr class="my-3 border-gray-200" />
+                    <div class="flex justify-between font-bold">
                         <span>Total</span>
-                        <span class="gradient-text">$@Model.Cart.Total.ToString("N2")</span>
+                        <span>$@Model.Cart.Total.ToString("N2")</span>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full gradient-primary text-white py-4 rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all text-lg">
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-medium hover:bg-blue-700">
                     Confirm Order
                 </button>
-                <a asp-controller="Cart" asp-action="Index" class="block w-full text-center py-3 text-gray-600 hover:text-primary font-medium transition-colors">← Back to Cart</a>
+                <a asp-controller="Cart" asp-action="Index" class="block w-full text-center py-2 text-sm text-gray-600 hover:underline">&larr; Back to Cart</a>
             </div>
         </div>
     </form>

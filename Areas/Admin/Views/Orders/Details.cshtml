@@ -3,47 +3,44 @@
     ViewData["Title"] = $"Order {Model.OrderNumber}";
 }
 
-<a asp-action="Index" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary mb-6 transition-colors">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-    Back to Orders
-</a>
+<a asp-action="Index" class="text-sm text-blue-600 hover:underline">&larr; Back to Orders</a>
 
-<div class="grid lg:grid-cols-3 gap-6">
+<div class="grid lg:grid-cols-3 gap-4 mt-4">
     <!-- Order Info -->
-    <div class="lg:col-span-2 space-y-6">
-        <div class="glass rounded-2xl p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">@Model.OrderNumber</h2>
+    <div class="lg:col-span-2 space-y-4">
+        <div class="bg-white border border-gray-200 rounded p-4">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-lg font-bold text-gray-800">@Model.OrderNumber</h2>
                 @{
                     var sc = Model.Status switch
                     {
-                        OrderStatus.Pending => "bg-yellow-100 text-yellow-700",
-                        OrderStatus.Processing => "bg-blue-100 text-blue-700",
-                        OrderStatus.Shipped => "bg-purple-100 text-purple-700",
-                        OrderStatus.Delivered => "bg-green-100 text-green-700",
-                        OrderStatus.Cancelled => "bg-red-100 text-red-700",
+                        OrderStatus.Pending => "bg-yellow-100 text-yellow-800",
+                        OrderStatus.Processing => "bg-blue-100 text-blue-800",
+                        OrderStatus.Shipped => "bg-purple-100 text-purple-800",
+                        OrderStatus.Delivered => "bg-green-100 text-green-800",
+                        OrderStatus.Cancelled => "bg-red-100 text-red-800",
                         _ => "bg-gray-100 text-gray-700"
                     };
                 }
-                <span class="text-sm font-semibold px-4 py-2 rounded-full @sc">@Model.Status</span>
+                <span class="text-xs px-2 py-0.5 rounded @sc">@Model.Status</span>
             </div>
             <p class="text-gray-500 text-sm">@Model.OrderDate.ToString("MMMM dd, yyyy 'at' hh:mm tt")</p>
-            <p class="text-3xl font-bold gradient-text mt-2">$@Model.TotalAmount.ToString("N2")</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">$@Model.TotalAmount.ToString("N2")</p>
         </div>
 
         <!-- Items -->
-        <div class="glass rounded-2xl p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Items</h3>
+        <div class="bg-white border border-gray-200 rounded p-4">
+            <h3 class="font-semibold text-gray-800 mb-3 text-sm">Items</h3>
             <div class="space-y-3">
                 @foreach (var item in Model.Items)
                 {
-                    <div class="flex items-center gap-4 p-3 rounded-xl bg-white/50">
-                        <img src="@item.ImageUrl" class="w-14 h-14 object-cover rounded-lg" onerror="this.src='https://placehold.co/56/e2e8f0/64748b?text=N'" />
+                    <div class="flex items-center gap-3">
+                        <img src="@item.ImageUrl" class="w-12 h-12 object-cover rounded" onerror="this.src='https://placehold.co/48/e2e8f0/64748b?text=N'" />
                         <div class="flex-1">
-                            <p class="font-medium text-gray-800">@item.ProductName</p>
-                            <p class="text-sm text-gray-500">$@item.UnitPrice.ToString("N2") × @item.Quantity</p>
+                            <p class="font-medium text-gray-800 text-sm">@item.ProductName</p>
+                            <p class="text-xs text-gray-500">$@item.UnitPrice.ToString("N2") &times; @item.Quantity</p>
                         </div>
-                        <span class="font-bold">$@item.LineTotal.ToString("N2")</span>
+                        <span class="font-semibold text-sm">$@item.LineTotal.ToString("N2")</span>
                     </div>
                 }
             </div>
@@ -51,26 +48,26 @@
     </div>
 
     <!-- Sidebar -->
-    <div class="space-y-6">
+    <div class="space-y-4">
         <!-- Update Status -->
-        <div class="glass rounded-2xl p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Update Status</h3>
+        <div class="bg-white border border-gray-200 rounded p-4">
+            <h3 class="font-semibold text-gray-800 mb-3 text-sm">Update Status</h3>
             <form asp-action="UpdateStatus" method="post">
                 <input type="hidden" name="id" value="@Model.Id" />
-                <select name="status" class="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3">
+                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-400 mb-3">
                     @foreach (OrderStatus s in Enum.GetValues(typeof(OrderStatus)))
                     {
                         <option value="@s" selected="@(s == Model.Status)">@s</option>
                     }
                 </select>
-                <button type="submit" class="w-full gradient-primary text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">Update Status</button>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700">Update Status</button>
             </form>
         </div>
 
         <!-- Shipping -->
-        <div class="glass rounded-2xl p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-3">Shipping Address</h3>
-            <div class="text-sm text-gray-600 space-y-1">
+        <div class="bg-white border border-gray-200 rounded p-4">
+            <h3 class="font-semibold text-gray-800 mb-2 text-sm">Shipping Address</h3>
+            <div class="text-sm text-gray-600 space-y-0.5">
                 <p>@Model.ShippingStreet</p>
                 <p>@Model.ShippingCity, @Model.ShippingZip</p>
                 <p>@Model.ShippingCountry</p>
