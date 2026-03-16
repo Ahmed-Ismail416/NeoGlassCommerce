@@ -3,21 +3,15 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="flex flex-col lg:flex-row gap-8">
-    <!-- Sidebar -->
-    <aside class="lg:w-72 flex-shrink-0">
-        <div class="glass rounded-2xl p-6 sticky top-24">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                Categories
-            </h2>
-            <div class="space-y-1">
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header small fw-bold">Categories</div>
+            <div class="list-group list-group-flush">
                 <a asp-controller="Catalog" asp-action="Index"
                    asp-route-q="@Model.SearchQuery"
                    asp-route-sort="@Model.SortBy"
-                   class="@(Model.SelectedCategoryId == null ? "gradient-primary text-white" : "text-gray-600 hover:bg-primary/10 hover:text-primary") block px-4 py-2.5 rounded-xl font-medium transition-all text-sm">
+                   class="list-group-item list-group-item-action @(Model.SelectedCategoryId == null ? "active" : "")">
                     All Products
                 </a>
                 @foreach (var cat in Model.Categories)
@@ -26,52 +20,44 @@
                        asp-route-categoryId="@cat.Id"
                        asp-route-q="@Model.SearchQuery"
                        asp-route-sort="@Model.SortBy"
-                       class="@(Model.SelectedCategoryId == cat.Id ? "gradient-primary text-white" : "text-gray-600 hover:bg-primary/10 hover:text-primary") flex items-center justify-between px-4 py-2.5 rounded-xl font-medium transition-all text-sm">
+                       class="list-group-item list-group-item-action d-flex justify-content-between @(Model.SelectedCategoryId == cat.Id ? "active" : "")">
                         <span>@cat.Name</span>
-                        <span class="@(Model.SelectedCategoryId == cat.Id ? "bg-white/20" : "bg-gray-100") text-xs px-2 py-0.5 rounded-full">@cat.ProductCount</span>
+                        <span class="badge bg-secondary">@cat.ProductCount</span>
                     </a>
                 }
             </div>
         </div>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <div class="flex-1">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">
+                <h5 class="mb-0">
                     @if (!string.IsNullOrEmpty(Model.SearchQuery))
                     {
-                        <span>Results for "<span class="gradient-text">@Model.SearchQuery</span>"</span>
+                        <span>Results for "@Model.SearchQuery"</span>
                     }
                     else
                     {
-                        <span>Our <span class="gradient-text">Products</span></span>
+                        <span>Products</span>
                     }
-                </h1>
-                <p class="text-gray-500 mt-1">@Model.TotalItems products found</p>
+                </h5>
+                <small class="text-muted">@Model.TotalItems items</small>
             </div>
-
-            <!-- Sort -->
-            <div x-data="{ open: false }" class="relative">
-                <button @@click="open = !open" class="glass px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:text-primary flex items-center gap-2 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
-                    Sort By
-                </button>
-                <div x-show="open" @@click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 glass rounded-xl shadow-xl py-2 z-20">
-                    <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="newest" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary">Newest First</a>
-                    <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="price_asc" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary">Price: Low → High</a>
-                    <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="price_desc" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary">Price: High → Low</a>
-                    <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="name" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary">Name A-Z</a>
-                </div>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Sort</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="newest">Newest</a></li>
+                    <li><a class="dropdown-item" asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="price_asc">Price: Low to High</a></li>
+                    <li><a class="dropdown-item" asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="price_desc">Price: High to Low</a></li>
+                    <li><a class="dropdown-item" asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-q="@Model.SearchQuery" asp-route-sort="name">Name A-Z</a></li>
+                </ul>
             </div>
         </div>
 
-        <!-- Products Grid -->
         @if (Model.Products.Any())
         {
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
                 @foreach (var product in Model.Products)
                 {
                     @await Html.PartialAsync("_ProductCard", product)
@@ -80,16 +66,12 @@
         }
         else
         {
-            <div class="glass rounded-2xl p-12 text-center">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <p class="text-gray-500 text-lg">No products found</p>
-                <a asp-controller="Catalog" asp-action="Index" class="inline-block mt-4 gradient-primary text-white px-6 py-2 rounded-xl font-medium">Browse All</a>
+            <div class="text-center py-5">
+                <p class="text-muted">No products found.</p>
+                <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary btn-sm">Browse All</a>
             </div>
         }
 
-        <!-- Pagination -->
         @await Html.PartialAsync("_Pagination", Model)
     </div>
 </div>

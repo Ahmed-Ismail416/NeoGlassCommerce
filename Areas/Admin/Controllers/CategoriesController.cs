@@ -49,6 +49,13 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
                 return View(vm);
             }
 
+            if (await _categoryRepo.ExistsWithNameAsync(vm.Name))
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+                await PopulateParentsAsync();
+                return View(vm);
+            }
+
             var category = new Category
             {
                 Name = vm.Name,
@@ -83,6 +90,13 @@ namespace NeoGlassCommerce.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await PopulateParentsAsync();
+                return View(vm);
+            }
+
+            if (await _categoryRepo.ExistsWithNameAsync(vm.Name, excludeId: vm.Id))
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
                 await PopulateParentsAsync();
                 return View(vm);
             }

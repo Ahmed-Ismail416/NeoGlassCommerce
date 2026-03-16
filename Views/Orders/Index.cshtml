@@ -3,56 +3,52 @@
     ViewData["Title"] = "My Orders";
 }
 
-<div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">My <span class="gradient-text">Orders</span></h1>
+<h4 class="mb-4">My Orders</h4>
 
-    @if (Model.Any())
-    {
-        <div class="space-y-4">
+@if (Model.Any())
+{
+    <table class="table">
+        <thead class="table-light">
+            <tr>
+                <th>Order</th>
+                <th>Date</th>
+                <th class="text-center">Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
             @foreach (var order in Model)
             {
-                <div class="glass rounded-2xl p-6 hover-lift">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <h3 class="font-bold text-gray-800 text-lg">@order.OrderNumber</h3>
-                            <p class="text-sm text-gray-500">Placed on @order.OrderDate.ToString("MMM dd, yyyy 'at' hh:mm tt")</p>
-                            <p class="text-sm text-gray-500">@order.ItemCount item(s)</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-right">
-                                <p class="text-2xl font-bold gradient-text">$@order.TotalAmount.ToString("N2")</p>
-                                @{
-                                    var statusColor = order.Status switch
-                                    {
-                                        OrderStatus.Pending => "bg-yellow-100 text-yellow-700",
-                                        OrderStatus.Processing => "bg-blue-100 text-blue-700",
-                                        OrderStatus.Shipped => "bg-purple-100 text-purple-700",
-                                        OrderStatus.Delivered => "bg-green-100 text-green-700",
-                                        OrderStatus.Cancelled => "bg-red-100 text-red-700",
-                                        _ => "bg-gray-100 text-gray-700"
-                                    };
-                                }
-                                <span class="inline-block mt-1 text-xs font-semibold px-3 py-1 rounded-full @statusColor">@order.Status</span>
-                            </div>
-                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"
-                               class="gradient-primary text-white px-5 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-primary/25 transition-all">
-                                View
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                var badgeClass = order.Status switch
+                {
+                    OrderStatus.Pending => "bg-warning text-dark",
+                    OrderStatus.Processing => "bg-info text-dark",
+                    OrderStatus.Shipped => "bg-primary",
+                    OrderStatus.Delivered => "bg-success",
+                    OrderStatus.Cancelled => "bg-danger",
+                    _ => "bg-secondary"
+                };
+                <tr>
+                    <td>@order.OrderNumber</td>
+                    <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                    <td class="text-center">@order.ItemCount</td>
+                    <td>$@order.TotalAmount.ToString("N2")</td>
+                    <td><span class="badge @badgeClass">@order.Status</span></td>
+                    <td>
+                        <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"
+                           class="btn btn-outline-primary btn-sm">View</a>
+                    </td>
+                </tr>
             }
-        </div>
-    }
-    else
-    {
-        <div class="glass rounded-2xl p-12 text-center">
-            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">No orders yet</h2>
-            <p class="text-gray-500 mb-6">Start shopping to see your orders here.</p>
-            <a asp-controller="Catalog" asp-action="Index" class="inline-block gradient-primary text-white px-8 py-3 rounded-xl font-semibold">Browse Products</a>
-        </div>
-    }
-</div>
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center py-5">
+        <p class="text-muted mb-3">No orders yet.</p>
+        <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary">Browse Products</a>
+    </div>
+}

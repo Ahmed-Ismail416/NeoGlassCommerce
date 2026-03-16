@@ -6,6 +6,7 @@ namespace NeoGlassCommerce.Repositories
     {
         Task<IEnumerable<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(int id);
+        Task<bool> ExistsWithNameAsync(string name, int? excludeId = null);
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);
         Task DeleteAsync(int id);

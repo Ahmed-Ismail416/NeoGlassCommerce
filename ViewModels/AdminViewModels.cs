@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using NeoGlassCommerce.Models;
 
 namespace NeoGlassCommerce.ViewModels
@@ -20,6 +21,7 @@ namespace NeoGlassCommerce.ViewModels
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public IFormFile? ImageFile { get; set; }
         public string Description { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
     }
